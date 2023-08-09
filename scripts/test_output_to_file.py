@@ -14,6 +14,6 @@ analysis-runner \
 
 string_to_print = 'hello world'
 
-f = open("hello_world.txt")
+f = open("hello_world.txt", "w")
 f.write("hello world")
 f.close()
