@@ -12,8 +12,12 @@ analysis-runner \
     scripts/test_output_to_file.py
 """
 
+from cpg_utils.hail_batch import output_path
+
+opath = output_path("hello_world.txt")
+
 string_to_print = 'hello world'
 
-f = open("hello_world.txt", "w")
+f = open(opath, "w")
 f.write("hello world")
 f.close()
