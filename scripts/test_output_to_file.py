@@ -12,12 +12,13 @@ analysis-runner \
     scripts/test_output_to_file.py
 """
 
+from cloudpathlib import CloudPath
 from cpg_utils.hail_batch import output_path
 
 opath = output_path("hello_world.txt")
 
 string_to_print = 'hello world'
 
-f = open(opath, "w")
-f.write("hello world")
-f.close()
+with CloudPath(opath).open("w") as f:
+    f.write("hello world")
+    f.close()
