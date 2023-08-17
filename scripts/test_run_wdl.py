@@ -16,7 +16,7 @@ def main():
     do the things
     """
 
-    batch = get_batch()
+    batch = get_batch('run the hello workflow')
 
     _config = get_config()
     submit_j, workflow_outputs = run_cromwell_workflow_from_repo_and_get_outputs(
