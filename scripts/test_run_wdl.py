@@ -24,7 +24,7 @@ def main():
         b=batch,
         driver_image=get_config()['workflow']['driver_image'],
         job_prefix='hello',
-        workflow='hello_all_in_one_file.wdl',
+        workflow='hello.wdl',
         cwd='scripts',
         input_dict={'hello.inp': 'Hello, Numbnuts!'},
         outputs_to_collect={
