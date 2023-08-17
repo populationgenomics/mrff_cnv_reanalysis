@@ -3,7 +3,8 @@ quick and dirty "hello" runner
 """
 
 
-from cpg_utils.hail_batch import get_config, output_path
+from cpg_utils.config import get_config
+from cpg_utils.hail_batch import output_path
 from cpg_workflows.batch import get_batch  # pipeline code, will be available in analysis-runner jobs
 from analysis_runner.cromwell import (
     run_cromwell_workflow_from_repo_and_get_outputs,
@@ -21,6 +22,7 @@ def main():
     _config = get_config()
     submit_j, workflow_outputs = run_cromwell_workflow_from_repo_and_get_outputs(
         b=batch,
+        driver_image=get_config()['workflow']['driver_image'],
         job_prefix='hello',
         workflow='hello_all_in_one_file.wdl',
         cwd='scripts',
