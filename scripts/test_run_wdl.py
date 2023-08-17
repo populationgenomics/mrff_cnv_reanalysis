@@ -38,7 +38,7 @@ def main():
     # temporary in-batch Hail file, lost after completion unless persisted
     print(workflow_outputs)
 
-    print_job = batch.new_job()
+    print_job = batch.new_job('cat the output to terminal')
     print_job.command(f"cat {workflow_outputs['out_string']}")
     print_job.depends_on(submit_j)
 
