@@ -30,7 +30,7 @@ def main():
         outputs_to_collect={
             'out_string': CromwellOutputType.single('hello.out')
         },
-        libs=[],  # tools should be included by default (https://github.com/populationgenomics/analysis-runner/blob/main/analysis_runner/cromwell.py#L154)
+        libs=[],
         output_prefix=output_path('hello_test_run'),
         dataset=get_config()['workflow']['dataset'],
         access_level=get_config()['workflow']['access_level'],
