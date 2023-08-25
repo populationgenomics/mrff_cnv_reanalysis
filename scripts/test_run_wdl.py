@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
+
 """
-quick and dirty "hello" runner
+quick and dirty "hello" wdl runner
 """
 
 
