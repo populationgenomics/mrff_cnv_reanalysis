@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-a small test script to test outputting to file / folder
+a small test script to test writing directly to output file / folder
 
 set this off using
 analysis-runner \
