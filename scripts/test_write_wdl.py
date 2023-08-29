@@ -49,7 +49,7 @@ def main():
 
     batch.run(wait=False)
 
-    batch.write_output(print_job.workflow_outputs['out_string'], output_path('hello_world.txt'))
+    batch.write_output(workflow_outputs['out_string'], output_path('hello_world.txt'))
 
 
 if __name__ == '__main__':
