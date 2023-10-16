@@ -30,7 +30,7 @@ def main():
         cwd='scripts',
         input_dict={'hello.inp': 'Hello, Numbnuts!'},
         outputs_to_collect={
-            'out_file': CromwellOutputType.single('hello.out')#,
+            'out_file': CromwellOutputType.single('hello.final_out')#,
             #'out_string': CromwellOutputType.single('hello.out')
         },
         libs=[],

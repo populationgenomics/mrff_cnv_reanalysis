@@ -11,7 +11,7 @@ workflow hello {
       inp = select_first([inp, "Hello, world!"])
   }
   output {
-    File out = "hello_wdl.txt"
+    File final_out = echo.out
   }
 }
 
