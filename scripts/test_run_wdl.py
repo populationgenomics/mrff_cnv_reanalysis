@@ -36,6 +36,7 @@ def main():
         output_prefix=output_path('hello_test_run'),
         dataset=get_config()['workflow']['dataset'],
         access_level=get_config()['workflow']['access_level'],
+        copy_outputs_to_gcp=True,
     )
 
     # should contain one single Resource Group
