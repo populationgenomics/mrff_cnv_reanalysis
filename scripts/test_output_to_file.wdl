@@ -11,7 +11,7 @@ workflow hello {
       inp = select_first([inp, "Hello, world!"])
   }
   output {
-    String out = print.out
+    File out = "hello_wdl.txt"
   }
 }
 
