@@ -26,15 +26,15 @@ def main():
         b=batch,
         driver_image=get_config()['workflow']['driver_image'],
         job_prefix='hello',
-        workflow='hello.wdl',
+        workflow='test_output_to_file.wdl',
         cwd='scripts',
         input_dict={'hello.inp': 'Hello, Numbnuts!'},
         outputs_to_collect={
-            # 'out_file': CromwellOutputType.single('echo.out'),
-            'out_string': CromwellOutputType.single('hello.out')
+            'out_file': CromwellOutputType.single('hello.out')#,
+            #'out_string': CromwellOutputType.single('hello.out')
         },
         libs=[],
-        output_prefix=output_path('hello_world.txt'),
+        output_prefix=output_path('hello_wdl.txt'),
         dataset=get_config()['workflow']['dataset'],
         access_level=get_config()['workflow']['access_level'],
         copy_outputs_to_gcp=True
@@ -45,12 +45,12 @@ def main():
     print(workflow_outputs)
 
     print_job = batch.new_job('cat the output to terminal')
-    print_job.command(f"cat {workflow_outputs['out_string']}")
+    print_job.command(f"cat {workflow_outputs['out_file']}")
     print_job.depends_on(submit_j)
 
     batch.run(wait=False)
 
-    batch.write_output(workflow_outputs['out_string'], output_path('hello_world.txt'))
+    # batch.write_output(workflow_outputs['out_file'], output_path('hello_wdl.txt'))
 
 
 if __name__ == '__main__':
