@@ -6,7 +6,7 @@ workflow hello {
     String? inp = "Hello, world!"
   }
 
-  call echo as print {
+  call echo {
     input:
       inp = select_first([inp, "Hello, world!"])
   }
