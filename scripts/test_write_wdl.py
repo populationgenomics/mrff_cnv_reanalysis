@@ -34,7 +34,7 @@ def main():
             #'out_string': CromwellOutputType.single('hello.out')
         },
         libs=[],
-        output_prefix='gs://',
+        output_prefix=get_config()['storage.acute-care']['tmp'],
         dataset=get_config()['workflow']['dataset'],
         access_level=get_config()['workflow']['access_level'],
         copy_outputs_to_gcp=True
