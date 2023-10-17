@@ -34,7 +34,7 @@ def main():
             #'out_string': CromwellOutputType.single('hello.out')
         },
         libs=[],
-        output_prefix=get_config()['storage.acute-care']['tmp'],
+        output_prefix=output_path('hello_wdl.txt', 'tmp'),
         dataset=get_config()['workflow']['dataset'],
         access_level=get_config()['workflow']['access_level'],
         copy_outputs_to_gcp=True
