@@ -15,13 +15,9 @@ workflow xhmm {
   }
   call run_xhmm_discover {
     input:
-      # bam_or_cram_file = bam_or_cram
-      # bam_or_cram_index = bam_or_cram_index
-      # reference_file = reference_fasta
-      # reference_index = reference_fasta_index
-      xhmm_params_file = xhmm_params
-      rd_matrix_normalised = normalised_read_depth_matrix
-      rd_matrix_original = orig_read_depth_matrix
+      xhmm_params_file = xhmm_params,
+      rd_matrix_normalised = normalised_read_depth_matrix,
+      rd_matrix_original = orig_read_depth_matrix,
       container = 'xhmm'
   }
   output {
@@ -36,14 +32,12 @@ task run_xhmm_discover {
     File xhmm_params_file
     File rd_matrix_normalised
     File rd_matrix_original
-    String xcnv_output_file
-    String aux_xcnv_output_file
     String container
   }
 
   output {
-      xcnv = 'analysis/xhmm/test.xhmm_discover.xcnv'
-      aux_xcnv = 'analysis/xhmm/test.xhmm_discover.aux_xcnv'
+    File xcnv = 'analysis/xhmm/test.xhmm_discover.xcnv'
+    File aux_xcnv = 'analysis/xhmm/test.xhmm_discover.aux_xcnv'
   }
 
   command <<<
