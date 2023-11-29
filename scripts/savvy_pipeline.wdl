@@ -18,17 +18,18 @@ workflow savvy {
     # TODO: CACHED COVERAGE
     call savvy_bin_coverage {
       input:
-        bam = sample,
-        container = 'savvy-cnv'
+        bam = sample
     }
   }
+
   call savvy_call_cnvs {
     input:
       coverage_bins = savvy_bin_coverage.coverage_bin,
       container = 'savvy-cnv'
   }
+
   output {
-    File savvy_cnvs
+    File savvy_cnvs = savvy_call_cnvs.savvy_cnvs
   }
 }
 
@@ -40,19 +41,24 @@ task savvy_bin_coverage {
 
   input {
     File bam
-    String container
   }
+
+  String bamBaseName = basename(bam, ".bam")
+
   output {
-    File coverage_bin = "analysis/savvy/${bam}.coverageBinner"
+    File coverage_bin = "analysis/savvy/" + bamBaseName + ".coverageBinner"
   }
-  command <<<
-    java -Xmx1g CoverageBinner bam > coverage_bin
-  >>>
+
+  command {
+    mkdir -p analysis/savvy
+
+    java -Xmx1g CoverageBinner ${bam} >  analysis/savvy/${bamBaseName}.coverageBinner
+  }
+
   runtime {
     cpu: 1
-    memory: "4 GiB"
-    disks: "local-disk 10 SSD"
-    docker: container
+    memory: "2 GiB"
+    docker: 'savvy-cnv:latest'
   }
 
 }
@@ -63,20 +69,19 @@ task savvy_call_cnvs {
     Array[File] coverage_bins
     String container
   }
+
   output {
-    File savvy_cnvs = 'analysis/savvy/savvy.cnvs.tsv'
+    File savvy_cnvs = 'savvy.cnvs.tsv'
   }
-  command <<<
-    java SavvyCNV -data \
-      -d 800 \
-      -trans 0.008 \
-      coverage_bins \
-      >> savvy_cnvs
-  >>>
+
+  command {
+    java SavvyCNV -data -d 800 -trans 0.008 ~{sep=" " coverage_bins} >> savvy.cnvs.tsv
+  }
+
   runtime {
     cpu: 1
     memory: "16 GiB"
-    disks: "local-disk 10 SSD"
+    #disks: "local-disk 10 SSD"
     docker: container
   }
 

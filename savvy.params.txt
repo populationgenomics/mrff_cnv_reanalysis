@@ -1,0 +1,2 @@
+savvy_transition_probability=0.008
+savvy_chunk_size=800
