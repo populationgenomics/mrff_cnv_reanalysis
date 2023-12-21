@@ -1,6 +1,13 @@
 #!
 version development
 
+# TODO
+# [x] GNGS CONTAINER
+# [x] COMPUTING of sample intervals summaries (& stats)
+# [] CONTROL SELECTION based on interval summaries
+# [x] COMPUTING of savvy coverage bins
+# [] VARIABLE LOGIC
+
 workflow savvy {
   input {
     File? savvy_params
@@ -24,8 +31,7 @@ workflow savvy {
 
   call savvy_call_cnvs {
     input:
-      coverage_bins = savvy_bin_coverage.coverage_bin,
-      container = 'savvy-cnv'
+      coverage_bins = savvy_bin_coverage.coverage_bin
   }
 
   output {
@@ -67,7 +73,6 @@ task savvy_call_cnvs {
 
   input {
     Array[File] coverage_bins
-    String container
   }
 
   output {
@@ -82,7 +87,7 @@ task savvy_call_cnvs {
     cpu: 1
     memory: "16 GiB"
     #disks: "local-disk 10 SSD"
-    docker: container
+    docker: 'savvy-cnv:latest'
   }
 
 }
