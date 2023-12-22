@@ -18,36 +18,36 @@ workflow ximmer {
   # TODO
   # }
   # call create_analysable_target {
-  # TODO
+  # TODO PROPERLY
+  #   input:
+  #     TARGETS = target_bed,
+  #     samples_names = bam_or_cram_files
   # }
-  if (enable_kmer_normalisation) {
-    scatter (sample in bam_or_cram_files) {
-      call compute_kmer_profiles {
-        input: 
-          bam = sample,
-          container = 'gngs'
-      }
-    }
-  }
+  # if (enable_kmer_normalisation) {
+  #   scatter (sample in bam_or_cram_files) {
+  #     call compute_kmer_profiles {
+  #       input: 
+  #         bam = sample
+  #     }
+  #   }
+  # }
   scatter (sample in bam_or_cram_files) {
+    # IGNORE OPTIONAL USE OF KMER PROFILES
     call calc_target_covs {
       input:
         TARGETS = target_bed,
-        bam = sample,
-        container = 'gngs'
+        bam = sample
     }
   }
   call calc_combined_correlations {
     input:
       sample_interval_summaries = calc_target_covs.sample_interval_summary,
-      samples_stats = calc_target_covs.sample_stats,
-      container = 'gngs'
+      samples_stats = calc_target_covs.sample_stats
   }
   call select_controls {
     input:
       input_correlations = calc_combined_correlations.combined_correlations_js,
-      control_samples = ???,
-      container = 'gngs'
+      control_samples = ???
   }
   # call init_batch {
   # TODO
@@ -99,7 +99,6 @@ task compute_kmer_profiles {
 
   input {
     File bam
-    String container
   }
   output {
     kmer_output_tsv = "common/kmers/${bam}.tsv"
@@ -116,7 +115,7 @@ task compute_kmer_profiles {
     cpu: 1
     memory: "4 GiB"
     disks: "local-disk 10 SSD"
-    # docker: container
+    docker: 'gngs'
   }
 
 }
@@ -126,15 +125,19 @@ task calc_target_covs {
   input {
     File TARGETS
     File bam
-    String container
   }
-  output {
-    sample_stats = ''
-    sample_interval_summary = ''
-  }
-  command <<<
-    unset GROOVY_HOME;
 
+  String bamBaseName = basename(bam, ".bam")
+  String memory = '8'
+  String GROOVY_ALL_JAR = 'groovy-3.0.10/lib/*'
+  String GNGS_JAR = 'groovy-ngs-utils/bin/gngs'
+
+  output {
+    sample_stats = "common/rawqc/individual/${bam}.stats.tsv"
+    sample_interval_summary = "common/rawqc/individual/${bam}.calc_target_covs.sample_interval_summary"
+  }
+  
+  command {
     java -Xmx${memory}g -cp $GROOVY_ALL_JAR:$GNGS_JAR \
       gngs.tools.Cov \
       -L TARGETS \ # TODO $kmerFlag
@@ -142,12 +145,13 @@ task calc_target_covs {
       -samplesummary sample_stats \
       -intervalsummary sample_interval_summary \
       bam
-  >>>
+  }
+  
   runtime {
     cpu: 1
     memory: "24 GiB"
     disks: "local-disk 10 SSD"
-    # docker: container
+    docker: 'gngs'
   }
 
 }
@@ -157,16 +161,15 @@ task calc_combined_correlations {
   input {
     Array[File] sample_interval_summaries
     Array[File] samples_stats
-    String container
   }
   output {
-    combined_correlations_tsv = 'filtered_controls.txt'
-    combined_correlations_js = ''
-    combined_covs_js = ''
-    combined_coeffv_js = ''
-    combined_interval_summary = ''
+    File combined_correlations_tsv = 'combined.correlations.tsv'
+    File combined_correlations_js = 'combined.correlations.js'
+    File combined_covs_js = 'combined.cov.js'
+    File combined_coeffv_js = 'combined.coeffv.js'
+    File combined_interval_summary = 'combined.sample_interval_summary'
   }
-  command <<<
+  command {
     JAVA_OPTS="-Xmx24g -Djava.awt.headless=true -noverify" $GROOVY -cp $GNGS_JAR:$XIMMER_SRC $XIMMER_SRC/ximmer/CalculateCombinedStatistics.groovy \
       -corrTSV combined_correlations_tsv \
       -corrJS combined_correlations_js \
@@ -176,12 +179,12 @@ task calc_combined_correlations {
       -threads 4 \
       sample_interval_summaries \
       samples_stats
-  >>>
+  }
   runtime {
     cpu: 1
     memory: "24 GiB"
     disks: "local-disk 10 SSD"
-    # docker: container
+    docker: 'gngs'
   }
 
 }
@@ -211,7 +214,7 @@ task select_controls {
     cpu: 1
     memory: "8 GiB"
     disks: "local-disk 10 SSD"
-    # docker: container
+    docker: 'gngs'
   }
 
 }
@@ -235,11 +238,8 @@ task create_cnv_report {
     cnvs_json = ''
     cnvs_html = ''
   }
-  command <<<
-    unset GROOVY_HOME
-
-    JAVA_OPTS="-Xmx12g -noverify" $GROOVY -cp $GNGS_JAR:$XIMMER_SRC:$XIMMER_SRC/../resources:$XIMMER_SRC/../js $XIMMER_SRC/Summ
-arizeCNVs.groovy \
+  command {
+    JAVA_OPTS="-Xmx12g -noverify" $GROOVY -cp $GNGS_JAR:$XIMMER_SRC:$XIMMER_SRC/../resources:$XIMMER_SRC/../js $XIMMER_SRC/SummarizeCNVs.groovy \
       -target TARGETS ${caller_opts.join(" ")} $refGeneOpts $reportChrFlag ${inputs.vcf.withFlag("-vcf")} ${inputs.vcf.gz.withFlag("-vcf")} \
       -ed ed_cnvs \
       -savvy savvy_cnvs \
@@ -251,7 +251,7 @@ arizeCNVs.groovy \
       ${batch_quality_params.join(" ")} \
       -o cnvs_html \
       ${batch_name ? "-name $batch_name" : ""} ${inputs.bam.withFlag('-bam')}
-  >>>
+  }
   runtime {
     cpu: 1
     memory: "12 GiB"
@@ -269,8 +269,9 @@ task  {
   output {
     # TODO
   }
-  command <<<
-  >>>
+  command {
+    # TODO
+  }
   runtime {
     cpu: 1
     memory: "4 GiB"
