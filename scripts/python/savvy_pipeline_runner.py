@@ -13,11 +13,12 @@ from analysis_runner.cromwell import (
 )
 import click
 
-@click.command()
-@click.argument('bam_or_cram_files', type=click.Path(exists=True))
-@click.argument('bam_or_cram_indices', type=click.Path(exists=True))
-@click.argument('savvy_params', type=click.Path(exists=True))
-def main(bam_or_cram_files, bam_or_cram_indices, savvy_params):
+#@click.command()
+#@click.argument('bam_or_cram_files', type=click.Path(exists=True))
+#@click.argument('bam_or_cram_indices', type=click.Path(exists=True))
+#@click.argument('savvy_params', type=click.Path(exists=True))
+#def main(bam_or_cram_files, bam_or_cram_indices, savvy_params):
+def main():
     """
     Run the savvy workflow and collect outputs
     """
@@ -31,11 +32,7 @@ def main(bam_or_cram_files, bam_or_cram_indices, savvy_params):
         job_prefix='savvycnv_pipeline_test',
         workflow='savvy_pipeline.wdl',
         cwd='scripts',
-        input_dict={
-            'savvy.bam_or_cram_files': bam_or_cram_files,
-            'savvy.bam_or_cram_indices': bam_or_cram_indices,
-            'savvy.savvy_params': savvy_params
-        },
+        input_dict = get_config()['cromwell_args'],
         outputs_to_collect={
             'savvy_cnv_calls': CromwellOutputType.single('savvy.savvy_cnvs')
             # '2nd_out_file': List of savvy coverage bins
