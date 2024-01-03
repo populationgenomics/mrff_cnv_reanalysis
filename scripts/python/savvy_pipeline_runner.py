@@ -40,7 +40,7 @@ def main():
         libs=[],
         output_prefix=output_path('savvycnv', 'tmp'),
         dataset=get_config()['workflow']['dataset'],
-        access_level=get_config()['workflow']['access_level'],
+        #access_level=get_config()['workflow']['access_level'],
         copy_outputs_to_gcp=True
     )
 
