@@ -64,7 +64,7 @@ task savvy_bin_coverage {
   runtime {
     cpu: 1
     memory: "2 GiB"
-    docker: 'savvy-cnv:latest'
+    docker: 'savvy-cnv:v1.0'
   }
 
 }
@@ -87,7 +87,7 @@ task savvy_call_cnvs {
     cpu: 1
     memory: "16 GiB"
     #disks: "local-disk 10 SSD"
-    docker: 'savvy-cnv:latest'
+    docker: 'savvy-cnv:v1.0'
   }
 
 }
