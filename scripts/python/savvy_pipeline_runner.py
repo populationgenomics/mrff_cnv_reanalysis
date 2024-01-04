@@ -31,7 +31,7 @@ def main():
         driver_image=get_config()['workflow']['driver_image'],
         job_prefix='savvycnv_pipeline_test',
         workflow='savvy_pipeline.wdl',
-        cwd='scripts',
+        cwd='scripts/wdl',
         input_dict = get_config()['cromwell_args'],
         outputs_to_collect={
             'savvy_cnv_calls': CromwellOutputType.single('savvy.savvy_cnvs')
