@@ -32,7 +32,7 @@ def main():
         job_prefix='savvycnv_pipeline_test',
         workflow='savvy_pipeline.wdl',
         cwd='scripts/wdl',
-        input_dict = {f'savvy.{k}': v for k, v in get_config()['cromwell_args']},
+        input_dict = {f'savvy.{k}': v for k, v in get_config()['cromwell_args'].items()},
         outputs_to_collect={
             'savvy_cnv_calls': CromwellOutputType.single('savvy.savvy_cnvs')
             # '2nd_out_file': List of savvy coverage bins
