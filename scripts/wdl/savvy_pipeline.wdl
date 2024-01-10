@@ -91,7 +91,7 @@ task savvy_call_cnvs {
     cpu: 1
     memory: "16 GiB"
     #disks: "local-disk 10 SSD"
-    docker: 'savvy-cnv:v1.0'
+    docker: 'australia-southeast1-docker.pkg.dev/cpg-common/images-dev/savvy-cnv:latest'
   }
 
 }
