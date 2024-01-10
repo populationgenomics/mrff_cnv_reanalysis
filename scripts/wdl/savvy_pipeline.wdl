@@ -64,7 +64,7 @@ task savvy_bin_coverage {
   runtime {
     cpu: 1
     memory: "2 GiB"
-    docker: 'savvy-cnv:v1.0'
+    docker: 'http://australia-southeast1-docker.pkg.dev/cpg-common/images-dev/savvy-cnv:latest'
   }
 
 }
