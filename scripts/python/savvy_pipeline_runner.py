@@ -6,7 +6,7 @@ An analysis runner to test the savvy-cnv container.
 
 from cpg_utils.config import get_config
 from cpg_utils.hail_batch import output_path
-from cpg_utils.hail_batch.get_batch import get_batch  # pipeline code, will be available in analysis-runner jobs
+from cpg_utils.hail_batch import get_batch  # pipeline code, will be available in analysis-runner jobs
 from analysis_runner.cromwell import (
     run_cromwell_workflow_from_repo_and_get_outputs,
     CromwellOutputType,
