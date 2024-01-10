@@ -62,7 +62,7 @@ task savvy_bin_coverage {
   command {
     mkdir -p analysis/savvy
 
-    java -Xmx1g CoverageBinner -R ref ${bam} >  analysis/savvy/${bamBaseName}.coverageBinner
+    java -Xmx1g CoverageBinner -R ${ref_fasta} ${bam} >  analysis/savvy/${bamBaseName}.coverageBinner
   }
 
   runtime {
