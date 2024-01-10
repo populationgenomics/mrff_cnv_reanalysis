@@ -13,8 +13,8 @@ workflow savvy {
     File? savvy_params
     Array[File] bam_or_cram_files
     Array[File]? bam_or_cram_indices
-    # File reference_fasta
-    # File? reference_fasta_index
+    File? ref_fasta
+    File? ref_fasta_index
     # String sex
     # String savvy_docker
   }
@@ -25,7 +25,9 @@ workflow savvy {
     # TODO: CACHED COVERAGE
     call savvy_bin_coverage {
       input:
-        bam = sample
+        bam = sample,
+        ref = ref_fasta,
+        ref_index = ref_fasta_index
     }
   }
 
@@ -47,6 +49,8 @@ task savvy_bin_coverage {
 
   input {
     File bam
+    File? ref
+    File? ref_index
   }
 
   String bamBaseName = basename(bam, ".bam")
@@ -58,7 +62,7 @@ task savvy_bin_coverage {
   command {
     mkdir -p analysis/savvy
 
-    java -Xmx1g CoverageBinner ${bam} >  analysis/savvy/${bamBaseName}.coverageBinner
+    java -Xmx1g CoverageBinner -R ref ${bam} >  analysis/savvy/${bamBaseName}.coverageBinner
   }
 
   runtime {
