@@ -26,8 +26,8 @@ workflow savvy {
     call savvy_bin_coverage {
       input:
         bam = sample,
-        ref = ref_fasta,
-        ref_index = ref_fasta_index
+        ref_fasta = ref_fasta,
+        ref_fai = ref_fasta_index
     }
   }
 
@@ -49,8 +49,8 @@ task savvy_bin_coverage {
 
   input {
     File bam
-    File? ref
-    File? ref_index
+    File? ref_fasta
+    File? ref_fai
   }
 
   String bamBaseName = basename(bam, ".bam")
