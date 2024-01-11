@@ -38,7 +38,7 @@ def main():
             # '2nd_out_file': List of savvy coverage bins
         },
         libs=[],
-        output_prefix=output_path('savvycnv'),
+        output_prefix=et_config()['workflow']['output_prefix'],#output_path('savvycnv'),
         dataset=get_config()['workflow']['dataset'],
         #access_level=get_config()['workflow']['access_level'],
         copy_outputs_to_gcp=True
