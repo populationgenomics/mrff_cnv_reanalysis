@@ -31,13 +31,22 @@ workflow savvy {
     }
   }
 
-  call savvy_call_cnvs {
+  call savvy_select_controls {
     input:
       coverage_bins = savvy_bin_coverage.coverage_bin
   }
 
+  scatter (coverage_bin in savvy_bin_coverage.coverage_bin) {
+    call savvy_call_cnvs {
+      input:
+        coverage_bins = coverage_bin,
+        control_summary = savvy_select_controls.control_summary
+    }
+  }
+
   output {
-    File savvy_cnvs = savvy_call_cnvs.savvy_cnvs
+    Array[File] savvy_cnvs = savvy_call_cnvs.savvy_cnvs
+    File control_summary = savvy_select_controls.control_summary
   }
 }
 
@@ -56,13 +65,11 @@ task savvy_bin_coverage {
   String bamBaseName = basename(bam, ".bam")
 
   output {
-    File coverage_bin = "analysis/savvy/" + bamBaseName + ".coverageBinner"
+    File coverage_bin = bamBaseName + ".coverageBinner"
   }
 
   command {
-    mkdir -p analysis/savvy
-
-    java -Xmx1g CoverageBinner -R ${ref_fasta} ${bam} >  analysis/savvy/${bamBaseName}.coverageBinner
+    java -Xmx1g CoverageBinner -R ${ref_fasta} ${bam} > ${bamBaseName}.coverageBinner
   }
 
   runtime {
@@ -76,23 +83,48 @@ task savvy_bin_coverage {
 task savvy_call_cnvs {
 
   input {
-    Array[File] coverage_bins
+    File coverage_bins
+    File control_summary
   }
+  
+  String baseName = basename(coverage_bins, ".coverageBinner")
 
   output {
-    File savvy_cnvs = 'savvy.cnvs.tsv'
+    File savvy_cnvs = baseName + ".savvy_cnvs.tsv"
   }
 
   command {
-    java SavvyCNV -data -d 800 -trans 0.008 ~{sep=" " coverage_bins} >> savvy.cnvs.tsv
+    java SavvyCNV -data -d 800 -trans 0.008 -sv 0 -case ${coverage_bins} -control `java -Xmx24g SelectControlSamples -subset 20 -summary ${control_summary}` >${baseName}.savvy_cnvs.tsv
   }
 
   runtime {
     cpu: 1
-    memory: "16 GiB"
+    memory: "24 GiB"
     #disks: "local-disk 10 SSD"
     docker: 'australia-southeast1-docker.pkg.dev/cpg-common/images-dev/savvy-cnv:latest'
   }
 
 }
 
+task savvy_select_controls {
+
+  input {
+    Array[File] coverage_bins
+  }
+
+  output {
+    File control_summary = 'savvy.control_select.summary'
+  }
+
+  command {
+    java -Xmx24g SelectControlSamples -d 800 ~{sep=" " coverage_bins} >savvy.control_select.summary
+  }
+
+  runtime {
+    cpu: 1
+    memory: "24 GiB"
+    #disks: "local-disk 10 SSD"
+    docker: 'australia-southeast1-docker.pkg.dev/cpg-common/images-dev/savvy-cnv:latest'
+  }
+
+}
