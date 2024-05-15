@@ -15,6 +15,10 @@ workflow savvy {
     Array[File]? bam_or_cram_indices
     File? ref_fasta
     File? ref_fasta_index
+    String param_d
+    String param_trans
+    String param_sv
+    String param_subset
   }
   # call init_savvyCNV {
   # TODO
@@ -31,12 +35,17 @@ workflow savvy {
 
   call savvy_select_controls {
     input:
+      d = param_d,
       coverage_bins = savvy_bin_coverage.coverage_bin
   }
 
   scatter (coverage_bin in savvy_bin_coverage.coverage_bin) {
     call savvy_call_cnvs {
       input:
+        d = param_d,
+        trans = param_trans,
+        sv = param_sv,
+        subset = param_subset,
         coverage_bins = coverage_bin,
         control_summary = savvy_select_controls.control_summary
     }
@@ -77,6 +86,7 @@ task savvy_bin_coverage {
 task savvy_select_controls {
 
   input {
+    String d
     Array[File] coverage_bins
   }
 
@@ -85,7 +95,7 @@ task savvy_select_controls {
   }
 
   command {
-    java -Xmx16g SelectControlSamples -d 800 ~{sep=" " coverage_bins} >savvy.control_select.summary
+    java -Xmx16g SelectControlSamples -${d} 800 ~{sep=" " coverage_bins} >savvy.control_select.summary
   }
 
   runtime {
@@ -99,6 +109,10 @@ task savvy_select_controls {
 task savvy_call_cnvs {
 
   input {
+    String d
+    String trans
+    String sv
+    String subset
     File coverage_bins
     File control_summary
   }
@@ -107,10 +121,11 @@ task savvy_call_cnvs {
 
   output {
     File savvy_cnvs = baseName + ".savvy_cnvs.tsv"
+    File log_files = baseName + ".log_messages.txt"
   }
 
   command {
-    java SavvyCNV -data -d 800 -trans 0.008 -sv 0 -case ${coverage_bins} -control `java -Xmx16g SelectControlSamples -subset 20 -summary ${control_summary}` >${baseName}.savvy_cnvs.tsv
+    java SavvyCNV -data -d ${d} -trans ${trans} -sv ${sv} -case ${coverage_bins} -control `java -Xmx24g SelectControlSamples -subset ${subset} -summary ${control_summary}` >${baseName}.savvy_cnvs.tsv
   }
 
   runtime {
