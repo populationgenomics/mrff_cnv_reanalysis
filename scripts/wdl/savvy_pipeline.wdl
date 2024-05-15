@@ -1,13 +1,6 @@
 #!
 version development
 
-# TODO
-# [x] GNGS CONTAINER
-# [x] COMPUTING of sample intervals summaries (& stats)
-# [] CONTROL SELECTION based on interval summaries
-# [x] COMPUTING of savvy coverage bins
-# [] VARIABLE LOGIC
-
 workflow savvy {
   input {
     File? savvy_params
@@ -33,11 +26,11 @@ workflow savvy {
     }
   }
 
-  call savvy_select_controls {
-    input:
-      d = param_d,
-      coverage_bins = savvy_bin_coverage.coverage_bin
-  }
+  #call savvy_select_controls {
+  #  input:
+  #    d = param_d,
+  #    coverage_bins = savvy_bin_coverage.coverage_bin
+  #}
 
   scatter (coverage_bin in savvy_bin_coverage.coverage_bin) {
     call savvy_call_cnvs {
