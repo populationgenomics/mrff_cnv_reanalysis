@@ -48,10 +48,6 @@ workflow savvy {
   }
 }
 
-# task init_savvyCNV {
-# TODO
-# }
-
 task savvy_bin_coverage {
 
   input {
@@ -97,7 +93,6 @@ task savvy_call_cnvs {
 
   runtime {
     cpu: 1
-    #disks: "local-disk 10 SSD"
     docker: 'australia-southeast1-docker.pkg.dev/cpg-common/images-dev/savvy-cnv:latest'
     memory: "16 GiB"
   }
