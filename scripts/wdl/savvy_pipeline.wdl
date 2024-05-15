@@ -15,8 +15,6 @@ workflow savvy {
     Array[File]? bam_or_cram_indices
     File? ref_fasta
     File? ref_fasta_index
-    # String sex
-    # String savvy_docker
   }
   # call init_savvyCNV {
   # TODO
@@ -99,9 +97,9 @@ task savvy_call_cnvs {
 
   runtime {
     cpu: 1
-    memory: "24 GiB"
     #disks: "local-disk 10 SSD"
     docker: 'australia-southeast1-docker.pkg.dev/cpg-common/images-dev/savvy-cnv:latest'
+    memory: "16 GiB"
   }
 
 }
@@ -122,9 +120,9 @@ task savvy_select_controls {
 
   runtime {
     cpu: 1
-    memory: "24 GiB"
     #disks: "local-disk 10 SSD"
     docker: 'australia-southeast1-docker.pkg.dev/cpg-common/images-dev/savvy-cnv:latest'
+    memory: "16 GiB"
   }
 
 }
