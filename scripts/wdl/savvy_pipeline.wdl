@@ -47,14 +47,15 @@ workflow savvy {
         sv = param_sv,
         subset = param_subset,
         coverage_bins = coverage_bin,
-        control_summary = savvy_select_controls.control_summary
+        control_bins = savvy_bin_coverage.coverage_bin
+        #control_summary = savvy_select_controls.control_summary
     }
   }
 
   output {
     Array[File] savvy_bins = savvy_bin_coverage.coverage_bin
+    #File control_summary = savvy_call_cnvs.control_summary
     Array[File] savvy_cnvs = savvy_call_cnvs.savvy_cnvs
-    File control_summary = savvy_select_controls.control_summary
     Array[File] savvy_log_files = savvy_call_cnvs.log_files
   }
 }
@@ -116,18 +117,22 @@ task savvy_call_cnvs {
     String sv
     String subset
     File coverage_bins
-    File control_summary
+    Array[File] control_bins
+    #File control_summary
   }
   
   String baseName = basename(coverage_bins, ".coverageBinner")
 
   output {
+    File control_summary = 'savvy.control_select.summary'
     File savvy_cnvs = baseName + ".savvy_cnvs.tsv"
     File log_files = baseName + ".log_messages.txt"
   }
 
   command {
-    java SavvyCNV -data -d ${d} -trans ${trans} -sv ${sv} -case ${coverage_bins} -control `java -Xmx24g SelectControlSamples -subset ${subset} -summary ${control_summary}` >${baseName}.savvy_cnvs.tsv 2>${baseName}.log_messages.txt
+    java -Xmx16g SelectControlSamples -d ${d} ~{sep=" " control_bins} >savvy.control_select.summary
+  
+    java SavvyCNV -data -d ${d} -trans ${trans} -sv ${sv} -case ${coverage_bins} -control `java -Xmx16g SelectControlSamples -subset ${subset} -summary savvy.control_select.summary` >${baseName}.savvy_cnvs.tsv 2>${baseName}.log_messages.txt
   }
 
   runtime {
