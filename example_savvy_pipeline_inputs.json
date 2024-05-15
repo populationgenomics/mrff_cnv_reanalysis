@@ -1,0 +1,17 @@
+{
+  "savvy.bam_or_cram_files": [
+      "gs://cpg-acute-care-test/path/to/example1.cram",
+      "gs://cpg-acute-care-test/path/to/example2.cram",
+  ],
+  "savvy.bam_or_cram_indices": [
+      "gs://cpg-acute-care-test/path/to/example1.cram.crai",
+      "gs://cpg-acute-care-test/path/to/example2.cram.crai",
+  ],
+  "savvy.ref_fasta": "gs://cpg-common-main/references/hg38/v0/dragen_reference/Homo_sapiens_assembly38_masked.fasta",
+  "savvy.ref_fasta_index": "gs://cpg-common-main/references/hg38/v0/dragen_reference/Homo_sapiens_assembly38_masked.fasta.fai",
+  "savvy.param_d": "800",
+  "savvy.param_trans": "0.0008",
+  "savvy.param_sv": "2",
+  "savvy.param_subset": "30"
+}
+
