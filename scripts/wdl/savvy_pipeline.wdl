@@ -74,6 +74,28 @@ task savvy_bin_coverage {
 
 }
 
+task savvy_select_controls {
+
+  input {
+    Array[File] coverage_bins
+  }
+
+  output {
+    File control_summary = 'savvy.control_select.summary'
+  }
+
+  command {
+    java -Xmx16g SelectControlSamples -d 800 ~{sep=" " coverage_bins} >savvy.control_select.summary
+  }
+
+  runtime {
+    cpu: 1
+    memory: "16 GiB"
+    docker: 'australia-southeast1-docker.pkg.dev/cpg-common/images-dev/savvy-cnv:latest'
+  }
+
+}
+
 task savvy_call_cnvs {
 
   input {
@@ -88,36 +110,13 @@ task savvy_call_cnvs {
   }
 
   command {
-    java SavvyCNV -data -d 800 -trans 0.008 -sv 0 -case ${coverage_bins} -control `java -Xmx24g SelectControlSamples -subset 20 -summary ${control_summary}` >${baseName}.savvy_cnvs.tsv
+    java SavvyCNV -data -d 800 -trans 0.008 -sv 0 -case ${coverage_bins} -control `java -Xmx16g SelectControlSamples -subset 20 -summary ${control_summary}` >${baseName}.savvy_cnvs.tsv
   }
 
   runtime {
     cpu: 1
-    docker: 'australia-southeast1-docker.pkg.dev/cpg-common/images-dev/savvy-cnv:latest'
     memory: "16 GiB"
-  }
-
-}
-
-task savvy_select_controls {
-
-  input {
-    Array[File] coverage_bins
-  }
-
-  output {
-    File control_summary = 'savvy.control_select.summary'
-  }
-
-  command {
-    java -Xmx24g SelectControlSamples -d 800 ~{sep=" " coverage_bins} >savvy.control_select.summary
-  }
-
-  runtime {
-    cpu: 1
-    #disks: "local-disk 10 SSD"
     docker: 'australia-southeast1-docker.pkg.dev/cpg-common/images-dev/savvy-cnv:latest'
-    memory: "16 GiB"
   }
 
 }
