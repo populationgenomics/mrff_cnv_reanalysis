@@ -52,8 +52,10 @@ workflow savvy {
   }
 
   output {
+    Array[File] savvy_bins = savvy_bin_coverage.coverage_bin
     Array[File] savvy_cnvs = savvy_call_cnvs.savvy_cnvs
     File control_summary = savvy_select_controls.control_summary
+    Array[File] savvy_log_files = savvy_call_cnvs.log_files
   }
 }
 
@@ -125,7 +127,7 @@ task savvy_call_cnvs {
   }
 
   command {
-    java SavvyCNV -data -d ${d} -trans ${trans} -sv ${sv} -case ${coverage_bins} -control `java -Xmx24g SelectControlSamples -subset ${subset} -summary ${control_summary}` >${baseName}.savvy_cnvs.tsv
+    java SavvyCNV -data -d ${d} -trans ${trans} -sv ${sv} -case ${coverage_bins} -control `java -Xmx24g SelectControlSamples -subset ${subset} -summary ${control_summary}` >${baseName}.savvy_cnvs.tsv 2>${baseName}.log_messages.txt
   }
 
   runtime {
