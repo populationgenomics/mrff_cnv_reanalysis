@@ -65,8 +65,11 @@ task savvy_bin_coverage {
     File coverage_bin = bamBaseName + ".coverageBinner"
   }
 
+  # NB: ref_fasta needed only for cram files
+
   command {
-    java -Xmx1g CoverageBinner -R ${ref_fasta} ${bam} > ${bamBaseName}.coverageBinner
+    java -Xmx1g CoverageBinner ${bam} > ${bamBaseName}.coverageBinner
+    #java -Xmx1g CoverageBinner -R ${ref_fasta} ${bam} > ${bamBaseName}.coverageBinner
   }
 
   runtime {
