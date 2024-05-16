@@ -72,7 +72,7 @@ task savvy_bin_coverage {
   runtime {
     cpu: 1
     memory: "2 GiB"
-    docker: 'australia-southeast1-docker.pkg.dev/cpg-common/images-dev/savvy-cnv:latest'
+    docker: 'savvy-cnv:latest'
   }
 
 }
@@ -95,7 +95,7 @@ task savvy_select_controls {
   runtime {
     cpu: 1
     memory: "16 GiB"
-    docker: 'australia-southeast1-docker.pkg.dev/cpg-common/images-dev/savvy-cnv:latest'
+    docker: 'savvy-cnv:latest'
   }
 
 }
@@ -129,7 +129,7 @@ task savvy_call_cnvs {
   runtime {
     cpu: 1
     memory: "16 GiB"
-    docker: 'australia-southeast1-docker.pkg.dev/cpg-common/images-dev/savvy-cnv:latest'
+    docker: 'savvy-cnv:latest'
   }
 
 }
