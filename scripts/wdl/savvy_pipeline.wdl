@@ -13,9 +13,7 @@ workflow savvy {
     String param_sv
     String param_subset
   }
-  # call init_savvyCNV {
-  # TODO
-  # }
+
   scatter (sample in bam_or_cram_files) {
     # TODO: CACHED COVERAGE
     call savvy_bin_coverage {
